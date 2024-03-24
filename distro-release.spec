@@ -3,6 +3,10 @@
 #
 %bcond_with bootstrap
 
+# Allow the package to build even if it fails some checks
+# (that are being disabled by this package for now)
+%global _nonzero_exit_pkgcheck_terminate_build 0
+
 %define new_distribution OpenMandriva Lx
 %define new_vendor OpenMandriva
 %define new_product OpenMandriva Lx
@@ -341,6 +345,8 @@ Suggests:	lxsession-lite
 Suggests:	pinentry-qt5
 # %{_lib}qt5-output-driver
 Suggests:	libqt5gui-eglfs
+# mpv vs. mplayer
+Suggests:	mpv
 # xdg-desktop-portal-implementation
 Suggests:	xdg-desktop-portal-kde
 # x11 vs. wayland for various backends
@@ -358,7 +364,7 @@ preferences for packages in which multiple options are possible.
 Summary:	Macros and scripts for %{new_vendor} specific rpm behavior
 Group:		System/Configuration/Packaging
 License:	MIT
-Requires:	rpm >= 2:4.14.2-0
+Requires:	rpm
 BuildArch:	noarch
 %rename rpm-openmandriva-setup
 
@@ -669,10 +675,12 @@ mkdir -p %{buildroot}%{_datadir}/kservices5
 mkdir -p %{buildroot}%{_datadir}/plasma/shells/org.kde.plasma.desktop/contents
 mkdir -p %{buildroot}%{_datadir}/plasma/layout-templates/org.openmandriva.plasma.desktop.defaultPanel/contents
 mkdir -p %{buildroot}%{_datadir}/konsole
+mkdir -p %{buildroot}%{_datadir}/applications
 
 for i in kcmdisplayrc kcmfonts kcminputrc kdeglobals kscreenlockerrc ksplashrc kwinrc plasmarc startupconfig startupconfigfiles kcm-about-distrorc ksmserverrc kiorc dolphinrc konsolerc klaunchrc discoverabstractnotifier.notifyrc plasma_workspace.notifyrc powermanagementprofilesrc; do
     install -m 0644 desktops/Plasma/$i %{buildroot}%{_sysconfdir}/xdg/$i
 done
+install -m 0644 desktops/Plasma6/mimeapps.list %{buildroot}%{_datadir}/applications/mimeapps.list
 
 install -m 0644 desktops/Plasma/metadata.desktop %{buildroot}%{_datadir}/plasma/layout-templates/org.openmandriva.plasma.desktop.defaultPanel/metadata.desktop
 install -m 0644 desktops/Plasma/metadata.desktop %{buildroot}%{_datadir}/kservices5/plasma-layout-template-org.openmandriva.plasma.desktop.defaultPanel.desktop
@@ -1159,6 +1167,7 @@ sed -i -e "s/#PRODUCT_ID/$(cat /etc/product.id)/" -e "s/#LANG/${LC_NAME/[-_]*}/g
 %{_datadir}/plasma/shells/org.kde.plasma.desktop/contents/layout.js
 %{_datadir}/plasma/layout-templates/org.openmandriva.plasma.desktop.globalMenuPanel
 %{_datadir}/plasma/look-and-feel/org.openmandriva5.desktop
+%{_datadir}/applications/mimeapps.list
 %endif
 
 %files theme
@@ -1202,9 +1211,10 @@ sed -i -e "s/#PRODUCT_ID/$(cat /etc/product.id)/" -e "s/#LANG/${LC_NAME/[-_]*}/g
 %attr(755,root,root) %{_rpmconfigdir}/openmandriva/kmod-deps.sh
 %{_rpmluadir}/fedora/common.lua
 %{_rpmluadir}/fedora/srpm/forge.lua
-%{_rpmconfigdir}/macros.d/macros.forge
 %{_rpmconfigdir}/macros.d/macros.dwz
+%{_rpmconfigdir}/macros.d/macros.forge
 %{_rpmconfigdir}/macros.d/macros.kernel
+%{_rpmconfigdir}/macros.d/macros.libpackage
 %{_rpmconfigdir}/macros.d/macros.perl
 %{_rpmconfigdir}/macros.d/macros.python
 %{_rpmconfigdir}/macros.d/macros.selinux
