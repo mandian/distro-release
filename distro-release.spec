@@ -2,6 +2,7 @@
 # make -C SOURCES release-notes.{html,txt}
 #
 %bcond_with bootstrap
+%undefine _debugsource_packages
 
 # Allow the package to build even if it fails some checks
 # (that are being disabled by this package for now)
@@ -75,7 +76,7 @@
 
 Summary:	%{new_distribution} release file
 Name:		distro-release
-Version:	24.03
+Version:	24.04
 # (tpg) something needs to be done to make comparision 3.0 > 2015.0 came true
 # 3001 = 3.1
 # 3001 = 3.2 etc.
